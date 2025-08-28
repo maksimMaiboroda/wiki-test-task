@@ -30,9 +30,10 @@
       "@router/*": ["src/router/*"],
       "@store/*": ["src/store/*"],
       "@pages/*": ["src/pages/*"],
-      "@layouts/*": ["lsrc/ayouts/*"],
+      "@layouts/*": ["src/layouts/*"],
       "@config/*": ["src/config/*"],
-      "@mocks/*": ["src/mocks/*"]
+      "@mocks/*": ["src/mocks/*"],
+      "@theme/*": ["src/theme/*"]
     }
   },
   "include": ["src"]
