@@ -6,7 +6,7 @@ type ListArticlesPropsType = {
   title: string;
 };
 
-const ListArticles: React.FC<ListArticlesPropsType> = ({ title }) => {
+const WikiArticle: React.FC<ListArticlesPropsType> = ({ title }) => {
   const { data, isLoading } = useGetArticleByTitleQuery(title);
 
   if (isLoading) return <CircularProgress sx={{ display: 'block', mx: 'auto', mt: 4 }} />;
@@ -18,4 +18,4 @@ const ListArticles: React.FC<ListArticlesPropsType> = ({ title }) => {
   );
 };
 
-export default ListArticles;
+export default WikiArticle;
