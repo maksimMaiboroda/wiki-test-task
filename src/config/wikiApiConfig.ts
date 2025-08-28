@@ -1,5 +1,4 @@
-export const WIKI_API_BASE_URL =
-  import.meta.env.VITE_WIKI_API_URL || 'https://en.wikipedia.org/w/api.php';
+export const WIKI_API_BASE_URL = 'https://en.wikipedia.org/w/api.php';
 
 export const WIKI_API_PARAMS = {
   format: 'json',

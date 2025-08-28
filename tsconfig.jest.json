@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@modals/*": ["src/components/modals/*"],
+      "@ui/*": ["src/components/ui/*"],
+      "@services/*": ["src/services/*"],
+      "@router/*": ["src/router/*"],
+      "@store/*": ["src/store/*"],
+      "@pages/*": ["src/pages/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@config/*": ["src/config/*"],
+      "@mocks/*": ["src/mocks/*"],
+      "@theme/*": ["src/theme/*"]
+    }
+  }
+}

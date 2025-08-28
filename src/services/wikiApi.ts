@@ -2,14 +2,33 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { WIKI_API_BASE_URL, WIKI_API_PARAMS, WIKI_ENDPOINTS } from '@/config/wikiApiConfig';
 import type { WikiArticle } from '@services/types/wikiApi';
 
+export const prepareWikiHeaders = (headers: Headers) => {
+  headers.set('origin', '*');
+  return headers;
+};
+
+export const transformRecentChanges = (response: any): WikiArticle[] =>
+  response.query.recentchanges.map((r: any) => ({
+    pageid: r.rcid,
+    title: r.title,
+  }));
+
+export const transformArticleByTitle = (response: any): WikiArticle =>
+  (() => {
+    const pages = response.query.pages;
+    const pageId = Object.keys(pages)[0];
+    return {
+      pageid: pages[pageId].pageid,
+      title: pages[pageId].title,
+      extract: pages[pageId].extract,
+    };
+  })();
+
 export const wikiApi = createApi({
   reducerPath: 'wikiApi',
   baseQuery: fetchBaseQuery({
     baseUrl: WIKI_API_BASE_URL,
-    prepareHeaders: (headers) => {
-      headers.set('origin', '*');
-      return headers;
-    },
+    prepareHeaders: prepareWikiHeaders,
   }),
   endpoints: (build) => ({
     getRecentChanges: build.query<WikiArticle[], number | void>({
@@ -17,26 +36,14 @@ export const wikiApi = createApi({
         url: WIKI_ENDPOINTS.recentChanges(limit),
         params: WIKI_API_PARAMS,
       }),
-      transformResponse: (response: any) =>
-        response.query.recentchanges.map((r: any) => ({
-          pageid: r.rcid,
-          title: r.title,
-        })),
+      transformResponse: transformRecentChanges,
     }),
     getArticleByTitle: build.query<WikiArticle, string>({
       query: (title) => ({
         url: WIKI_ENDPOINTS.articleByTitle(title),
         params: WIKI_API_PARAMS,
       }),
-      transformResponse: (response: any) => {
-        const pages = response.query.pages;
-        const pageId = Object.keys(pages)[0];
-        return {
-          pageid: pages[pageId].pageid,
-          title: pages[pageId].title,
-          extract: pages[pageId].extract,
-        };
-      },
+      transformResponse: transformArticleByTitle,
     }),
   }),
 });
