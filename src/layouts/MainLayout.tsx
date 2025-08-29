@@ -7,16 +7,25 @@ const navItems = [
 ] as const;
 
 const MainLayout: React.FC = () => {
+  const appBarHeight = 64;
+
   return (
     <>
-      <AppBar component="nav" position="static">
+      <AppBar component="nav" position="fixed">
         <Toolbar>
           <Typography
             variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+            component={Link}
+            to="/"
+            sx={{
+              flexGrow: 1,
+              display: { xs: 'none', sm: 'block' },
+              color: 'inherit',
+              textDecoration: 'none',
+              cursor: 'pointer',
+            }}
           >
-            Wikipedia Latest Articles
+            Wikipedia This Day Articles
           </Typography>
           <Box>
             {navItems.map((item) => (
@@ -27,7 +36,7 @@ const MainLayout: React.FC = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Container maxWidth="lg" sx={{ mt: `${appBarHeight + 16}px`, mb: 4 }}>
         <Outlet />
       </Container>
     </>

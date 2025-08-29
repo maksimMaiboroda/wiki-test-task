@@ -1,29 +1,40 @@
+// src/components/ListArticles/ListArticles.tsx
 import React from 'react';
 import { Paper, Typography } from '@mui/material';
-import WikiArticle from './WikiArticle';
-
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 
-import type { WikiArticle as WikiArticleType } from '../../services/types/wikiApi';
+import type { OnThisDayEvent } from '@services/types/wikiApi';
 
 type ListArticlesPropsType = {
-  articles: WikiArticleType[];
+  articles: OnThisDayEvent[];
 };
 
-const ListArticles: React.FC<ListArticlesPropsType> = (props) => {
-  const { articles } = props;
-
+const ListArticles: React.FC<ListArticlesPropsType> = ({ articles }) => {
   return (
     <List>
-      {articles?.map((r) => (
-        <ListItem key={r.pageid} sx={{ pl: 0, pr: 0 }}>
-          <Paper elevation={1} sx={{ padding: 4 }}>
-            <Typography variant="h6">{r.title}</Typography>
-            <WikiArticle title={r.title} />
-          </Paper>
-        </ListItem>
-      ))}
+      {articles?.map((item, idx) => {
+        const key = item.pageId ?? `${item.year}-${idx}`;
+        return (
+          <ListItem key={key} sx={{ pl: 0, pr: 0 }}>
+            <Paper elevation={1} sx={{ p: 4, width: '100%' }}>
+              <Typography variant="h6" gutterBottom>
+                {item.year} — {item.title ?? 'Untitled'}
+              </Typography>
+
+              <Typography variant="subtitle1" gutterBottom>
+                {item.text}
+              </Typography>
+
+              {item.extract && (
+                <Typography variant="body2" color="text.secondary">
+                  {item.extract}
+                </Typography>
+              )}
+            </Paper>
+          </ListItem>
+        );
+      })}
     </List>
   );
 };

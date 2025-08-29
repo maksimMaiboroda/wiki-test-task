@@ -1,51 +1,54 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { WIKI_API_BASE_URL, WIKI_API_PARAMS, WIKI_ENDPOINTS } from '@/config/wikiApiConfig';
-import type { WikiArticle } from '@services/types/wikiApi';
+import { WIKI_REST_BASE_URL, WIKI_REST_ENDPOINTS } from '@/config/wikiApiConfig';
+import type { OnThisDayEvent } from '@services/types/wikiApi';
 
-export const prepareWikiHeaders = (headers: Headers) => {
-  headers.set('origin', '*');
-  return headers;
+const getTodayMD = () => {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  return { month, day };
 };
 
-export const transformRecentChanges = (response: any): WikiArticle[] =>
-  response.query.recentchanges.map((r: any) => ({
-    pageid: r.rcid,
-    title: r.title,
-  }));
-
-export const transformArticleByTitle = (response: any): WikiArticle =>
-  (() => {
-    const pages = response.query.pages;
-    const pageId = Object.keys(pages)[0];
+export const transformOnThisDay = (response: any): OnThisDayEvent[] => {
+  const events: OnThisDayEvent[] = (response?.events ?? []).map((e: any) => {
+    const page = e?.pages?.[0];
     return {
-      pageid: pages[pageId].pageid,
-      title: pages[pageId].title,
-      extract: pages[pageId].extract,
+      year: e?.year,
+      text: e?.text,
+      title: page?.titles?.normalized ?? page?.titles?.display,
+      extract: page?.extract,
+      pageId: page?.pageid,
+      contentUrl: page?.content_urls?.desktop?.page,
+      thumbnail: page?.thumbnail
+        ? {
+            source: page.thumbnail.source,
+            width: page.thumbnail.width,
+            height: page.thumbnail.height,
+          }
+        : undefined,
     };
-  })();
+  });
+
+  events.sort((a, b) => a.year - b.year);
+  return events;
+};
 
 export const wikiApi = createApi({
   reducerPath: 'wikiApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: WIKI_API_BASE_URL,
-    prepareHeaders: prepareWikiHeaders,
+    baseUrl: WIKI_REST_BASE_URL,
   }),
   endpoints: (build) => ({
-    getRecentChanges: build.query<WikiArticle[], number | void>({
-      query: (limit: number = 10) => ({
-        url: WIKI_ENDPOINTS.recentChanges(limit),
-        params: WIKI_API_PARAMS,
-      }),
-      transformResponse: transformRecentChanges,
-    }),
-    getArticleByTitle: build.query<WikiArticle, string>({
-      query: (title) => ({
-        url: WIKI_ENDPOINTS.articleByTitle(title),
-        params: WIKI_API_PARAMS,
-      }),
-      transformResponse: transformArticleByTitle,
+    getOnThisDayEvents: build.query<OnThisDayEvent[], { month: number; day: number } | void>({
+      query: (arg) => {
+        const { month, day } = arg ?? getTodayMD();
+        return {
+          url: WIKI_REST_ENDPOINTS.onThisDayEvents(month, day),
+        };
+      },
+      transformResponse: transformOnThisDay,
     }),
   }),
 });
 
-export const { useLazyGetRecentChangesQuery, useGetArticleByTitleQuery } = wikiApi;
+export const { useLazyGetOnThisDayEventsQuery } = wikiApi;

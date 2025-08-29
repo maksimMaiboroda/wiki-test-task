@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useLazyGetRecentChangesQuery } from '../../services/wikiApi';
+import { useLazyGetOnThisDayEventsQuery } from '@/services/wikiApi';
 import { Typography, Box, Container, Button } from '@mui/material';
 import ErrorModal from '@/components/modals/ErrorModal';
 import Loader from '@/components/ui/Loader';
 import ListArticles from '@/components/ListArticles/ListArticles';
 
 const HomePage: React.FC = () => {
-  const [trigger, { data: recent, isFetching, error }] = useLazyGetRecentChangesQuery();
+  const [trigger, { data: events, isFetching, error }] = useLazyGetOnThisDayEventsQuery();
   const [openErrorModal, setOpenErrorModal] = useState(false);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const HomePage: React.FC = () => {
   }, [error]);
 
   const handleClick = () => {
-    trigger(15);
+    trigger();
   };
 
   const handleCloseModal = () => {
@@ -28,21 +28,24 @@ const HomePage: React.FC = () => {
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Box>
         <Typography variant="h1" gutterBottom>
-          Recent Wikipedia Changes
+          Wikipedia — On This Day
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
-          Please, press to the button to get new articles:
+          Press the button to load today&apos;s events:
         </Typography>
-        <Button variant="contained" onClick={handleClick} loading={isFetching} sx={{ mb: 2 }}>
-          Get Articles
+
+        <Button variant="contained" onClick={handleClick} sx={{ mb: 2 }}>
+          Load Events
         </Button>
-        {isFetching ? <Loader isLoading={isFetching} /> : <ListArticles articles={recent || []} />}
+
+        {isFetching ? <Loader isLoading={isFetching} /> : <ListArticles articles={events || []} />}
       </Box>
+
       <ErrorModal
-        title="Failed to Load Articles"
+        title="Failed to Load Events"
         openErrorModal={openErrorModal}
         handleCloseModal={handleCloseModal}
-        message="There was a problem fetching the latest Wikipedia articles. Please try again later."
+        message="There was a problem fetching Wikipedia events. Please try again later."
       />
     </Container>
   );
