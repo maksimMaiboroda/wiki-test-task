@@ -4,6 +4,7 @@ import { Typography, Box, Container, Button } from '@mui/material';
 import ErrorModal from '@/components/modals/ErrorModal';
 import Loader from '@/components/ui/Loader';
 import ListArticles from '@/components/ListArticles/ListArticles';
+import { getTodayMD } from '@utils/index';
 
 const HomePage: React.FC = () => {
   const [trigger, { data: events, isFetching, error }] = useLazyGetOnThisDayEventsQuery();
@@ -17,7 +18,7 @@ const HomePage: React.FC = () => {
   }, [error]);
 
   const handleClick = () => {
-    trigger();
+    trigger(getTodayMD());
   };
 
   const handleCloseModal = () => {
@@ -31,10 +32,10 @@ const HomePage: React.FC = () => {
           Wikipedia — On This Day
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
-          Press the button to load today&apos;s events:
+          Press the button to load today's articles:
         </Typography>
 
-        <Button variant="contained" onClick={handleClick} sx={{ mb: 2 }}>
+        <Button variant="contained" onClick={handleClick} sx={{ mb: 2 }} loading={isFetching}>
           Load Events
         </Button>
 

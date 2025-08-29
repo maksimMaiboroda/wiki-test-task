@@ -1,21 +1,10 @@
-// src/services/__tests__/wikiApi.test.ts
-
-import {
-  wikiApi,
-  transformRecentChanges,
-  transformArticleByTitle,
-  prepareWikiHeaders,
-} from '../wikiApi';
-import { WIKI_API_BASE_URL, WIKI_API_PARAMS, WIKI_ENDPOINTS } from '../../config/wikiApiConfig';
+import { wikiApi, transformOnThisDay } from '../wikiApi';
+import { WIKI_REST_BASE_URL, WIKI_REST_ENDPOINTS } from '../../config/wikiApiConfig';
 
 jest.mock('../../config/wikiApiConfig', () => ({
-  WIKI_API_BASE_URL: 'https://en.wikipedia.org/w/api.php',
-  WIKI_API_PARAMS: { format: 'json', origin: '*' },
-  WIKI_ENDPOINTS: {
-    recentChanges: (limit: number) =>
-      `?action=query&list=recentchanges&rcprop=title|ids|timestamp|user&rclimit=${limit}`,
-    articleByTitle: (title: string) =>
-      `?action=query&prop=extracts&exintro=true&explaintext=true&titles=${encodeURIComponent(title)}`,
+  WIKI_REST_BASE_URL: 'https://en.wikipedia.org/api/rest_v1',
+  WIKI_REST_ENDPOINTS: {
+    onThisDayEvents: (month: number, day: number) => `/feed/onthisday/events/${month}/${day}`,
   },
 }));
 
@@ -24,90 +13,71 @@ describe('wikiApi', () => {
     expect(wikiApi.reducerPath).toBe('wikiApi');
   });
 
-  it('should export the correct hooks', () => {
-    expect(wikiApi.useLazyGetRecentChangesQuery).toBeDefined();
-    expect(wikiApi.useGetArticleByTitleQuery).toBeDefined();
+  it('should export the correct hook', () => {
+    expect(wikiApi.useLazyGetOnThisDayEventsQuery).toBeDefined();
   });
 
-  it('should transform response for getRecentChanges correctly', () => {
+  it('should transform response for getOnThisDayEvents correctly', () => {
     const mockResponse = {
-      query: {
-        recentchanges: [
-          {
-            rcid: 123,
-            title: 'Test Title 1',
-            pageid: 1001,
-            revid: 1002,
-            timestamp: '2023-01-01T00:00:00Z',
-            user: 'TestUser',
-          },
-          {
-            rcid: 456,
-            title: 'Test Title 2',
-            pageid: 1003,
-            revid: 1004,
-            timestamp: '2023-01-02T00:00:00Z',
-            user: 'TestUser2',
-          },
-        ],
-      },
+      events: [
+        {
+          year: 2000,
+          text: 'Event A happened.',
+          pages: [
+            {
+              pageid: 123,
+              titles: { normalized: 'Event A Page' },
+              extract: 'Details about Event A.',
+              content_urls: { desktop: { page: 'https://en.wikipedia.org/wiki/Event_A' } },
+              thumbnail: { source: 'thumb.jpg', width: 100, height: 100 },
+            },
+          ],
+        },
+        {
+          year: 1900,
+          text: 'Event B happened.',
+          pages: [
+            {
+              pageid: 456,
+              titles: { display: 'Event B Page' },
+              extract: 'Details about Event B.',
+            },
+          ],
+        },
+      ],
     };
 
-    const transformed = transformRecentChanges(mockResponse);
+    const transformed = transformOnThisDay(mockResponse);
+
+    // повинно бути відсортовано за роком
     expect(transformed).toEqual([
-      { pageid: 123, title: 'Test Title 1' },
-      { pageid: 456, title: 'Test Title 2' },
+      {
+        year: 1900,
+        text: 'Event B happened.',
+        title: 'Event B Page',
+        extract: 'Details about Event B.',
+        pageId: 456,
+        contentUrl: undefined,
+        thumbnail: undefined,
+      },
+      {
+        year: 2000,
+        text: 'Event A happened.',
+        title: 'Event A Page',
+        extract: 'Details about Event A.',
+        pageId: 123,
+        contentUrl: 'https://en.wikipedia.org/wiki/Event_A',
+        thumbnail: { source: 'thumb.jpg', width: 100, height: 100 },
+      },
     ]);
   });
 
-  it('should transform response for getArticleByTitle correctly', () => {
-    const mockResponse = {
-      query: {
-        pages: {
-          '789': {
-            pageid: 789,
-            title: 'Test Title',
-            extract: 'This is a test extract.',
-          },
-        },
-      },
-    };
-
-    const transformed = transformArticleByTitle(mockResponse);
-    expect(transformed).toEqual({
-      pageid: 789,
-      title: 'Test Title',
-      extract: 'This is a test extract.',
-    });
-  });
-
-  it('should set origin header in requests', () => {
-    const headers = new Headers();
-    const updatedHeaders = prepareWikiHeaders(headers);
-
-    expect(updatedHeaders.get('origin')).toBe('*');
-  });
-
-  it('should generate correct query URLs', () => {
-    const limit = 5;
-    const title = 'Test Title';
-
-    const recentChangesUrl = WIKI_ENDPOINTS.recentChanges(limit);
-    expect(recentChangesUrl).toBe(
-      '?action=query&list=recentchanges&rcprop=title|ids|timestamp|user&rclimit=5'
-    );
-
-    const articleUrl = WIKI_ENDPOINTS.articleByTitle(title);
-    expect(articleUrl).toBe(
-      '?action=query&prop=extracts&exintro=true&explaintext=true&titles=Test%20Title'
-    );
-  });
-
-  it('should use correct default params', () => {
-    expect(WIKI_API_PARAMS).toEqual({ format: 'json', origin: '*' });
+  it('should generate correct endpoint URLs', () => {
+    const url = WIKI_REST_ENDPOINTS.onThisDayEvents(12, 25);
+    expect(url).toBe('/feed/onthisday/events/12/25');
   });
 
   it('should have correct base URL', () => {
-    expect(WIKI_API_BASE_URL).toBe('https://en.wikipedia.org/w/api.php');
+    expect(WIKI_REST_BASE_URL).toBe('https://en.wikipedia.org/api/rest_v1');
   });
 });

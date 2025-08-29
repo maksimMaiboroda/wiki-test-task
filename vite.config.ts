@@ -18,6 +18,7 @@ export default defineConfig({
       '@layouts': path.resolve(__dirname, './src/layouts'),
       '@config': path.resolve(__dirname, './src/config'),
       '@theme': path.resolve(__dirname, './src/theme'),
+      '@utils': path.resolve(__dirname, './src/utils'),
     },
   },
 });

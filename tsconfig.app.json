@@ -33,7 +33,8 @@
       "@layouts/*": ["src/layouts/*"],
       "@config/*": ["src/config/*"],
       "@mocks/*": ["src/mocks/*"],
-      "@theme/*": ["src/theme/*"]
+      "@theme/*": ["src/theme/*"],
+      "@utils/*": ["src/utils/*"]
     }
   },
   "include": ["src"]

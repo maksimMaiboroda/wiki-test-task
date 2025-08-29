@@ -22,15 +22,10 @@ const ErrorModal: React.FC<ErrorModalProps> = ({
   message,
 }) => {
   return (
-    <Dialog
-      open={openErrorModal}
-      onClose={handleCloseModal}
-      aria-labelledby="error-dialog-title"
-      aria-describedby="error-dialog-description"
-    >
-      <DialogTitle id="error-dialog-title">{title}</DialogTitle>
+    <Dialog open={openErrorModal} onClose={handleCloseModal}>
+      <DialogTitle data-testid="error-modal-title">{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="error-dialog-description">
+        <DialogContentText data-testid="error-modal-description">
           {message || 'Unknown error. Please try again later.'}
         </DialogContentText>
       </DialogContent>

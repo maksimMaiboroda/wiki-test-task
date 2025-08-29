@@ -2,13 +2,6 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { WIKI_REST_BASE_URL, WIKI_REST_ENDPOINTS } from '@/config/wikiApiConfig';
 import type { OnThisDayEvent } from '@services/types/wikiApi';
 
-const getTodayMD = () => {
-  const now = new Date();
-  const month = now.getMonth() + 1;
-  const day = now.getDate();
-  return { month, day };
-};
-
 export const transformOnThisDay = (response: any): OnThisDayEvent[] => {
   const events: OnThisDayEvent[] = (response?.events ?? []).map((e: any) => {
     const page = e?.pages?.[0];
@@ -39,9 +32,10 @@ export const wikiApi = createApi({
     baseUrl: WIKI_REST_BASE_URL,
   }),
   endpoints: (build) => ({
-    getOnThisDayEvents: build.query<OnThisDayEvent[], { month: number; day: number } | void>({
+    getOnThisDayEvents: build.query<OnThisDayEvent[], { month: number; day: number }>({
       query: (arg) => {
-        const { month, day } = arg ?? getTodayMD();
+        const { month, day } = arg;
+
         return {
           url: WIKI_REST_ENDPOINTS.onThisDayEvents(month, day),
         };
