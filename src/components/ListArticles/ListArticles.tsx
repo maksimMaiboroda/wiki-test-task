@@ -1,4 +1,3 @@
-// src/components/ListArticles/ListArticles.tsx
 import React from 'react';
 import { Paper, Typography } from '@mui/material';
 import List from '@mui/material/List';
