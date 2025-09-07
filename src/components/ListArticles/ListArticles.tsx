@@ -20,7 +20,16 @@ const ListArticles: React.FC<ListArticlesPropsType> = ({ articles }) => {
         const key = item.pageId ?? `${item.year}-${idx}`;
         return (
           <ListItem key={key} sx={{ pl: 0, pr: 0 }}>
-            <Paper elevation={1} sx={{ p: 4, width: '100%', display: 'flex', gap: 2 }}>
+            <Paper
+              elevation={1}
+              sx={{
+                p: 4,
+                width: '100%',
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: 2,
+              }}
+            >
               <img
                 srcSet={`${item.thumbnail?.source}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                 src={`${item.thumbnail?.source}?w=164&h=164&fit=crop&auto=format`}
