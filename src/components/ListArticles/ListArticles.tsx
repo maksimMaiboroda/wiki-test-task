@@ -15,7 +15,7 @@ type ListArticlesPropsType = {
 
 const ListArticles: React.FC<ListArticlesPropsType> = ({ articles }) => {
   return (
-    <List>
+    <List data-testid="articles-list">
       {articles?.map((item, idx) => {
         const key = item.pageId ?? `${item.year}-${idx}`;
         return (

@@ -22,5 +22,8 @@ describe('ListArticles', () => {
 
   it('renders empty state when no articles', () => {
     render(<ListArticles articles={[]} />);
+
+    const list = screen.getByTestId('articles-list');
+    expect(list.childElementCount).toBe(0);
   });
 });
