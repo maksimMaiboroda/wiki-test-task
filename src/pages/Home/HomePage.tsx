@@ -1,51 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { useLazyGetOnThisDayEventsQuery } from '@/services/wikiApi';
-import { Typography, Box, Container, Button } from '@mui/material';
+import React from 'react';
+import { Typography, Container } from '@mui/material';
 import ErrorModal from '@/components/modals/ErrorModal';
 import Loader from '@/components/ui/Loader';
 import ListArticles from '@/components/ListArticles/ListArticles';
-import { getTodayMD } from '@utils/index';
+import { useCachedEvents } from '@hooks/useCachedEvents';
+import EventControls from '@ui/EventControls/EventControls';
 
 const HomePage: React.FC = () => {
-  const [trigger, { data: events, isFetching, error }] = useLazyGetOnThisDayEventsQuery();
-  const [openErrorModal, setOpenErrorModal] = useState(false);
-
-  useEffect(() => {
-    if (error) {
-      setOpenErrorModal(true);
-      console.error({ error });
-    }
-  }, [error]);
-
-  const handleClick = () => {
-    trigger(getTodayMD());
-  };
-
-  const handleCloseModal = () => {
-    setOpenErrorModal(false);
-  };
+  const { events, isFetching, loadEvents, openErrorModal, closeErrorModal } = useCachedEvents();
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Box>
-        <Typography variant="h1" gutterBottom>
-          Wikipedia — On This Day
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
-          Press the button to load today's articles:
-        </Typography>
+      <Typography variant="h1" gutterBottom>
+        Wikipedia — On This Day
+      </Typography>
 
-        <Button variant="contained" onClick={handleClick} sx={{ mb: 2 }} loading={isFetching}>
-          Load Events
-        </Button>
+      <EventControls onLoadEvents={loadEvents} isLoading={isFetching} />
 
-        {isFetching ? <Loader isLoading={isFetching} /> : <ListArticles articles={events || []} />}
-      </Box>
+      {isFetching ? <Loader isLoading={isFetching} /> : <ListArticles articles={events || []} />}
 
       <ErrorModal
         title="Failed to Load Events"
         openErrorModal={openErrorModal}
-        handleCloseModal={handleCloseModal}
+        handleCloseModal={closeErrorModal}
         message="There was a problem fetching Wikipedia events. Please try again later."
       />
     </Container>
