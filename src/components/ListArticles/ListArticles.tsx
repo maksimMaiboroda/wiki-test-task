@@ -15,9 +15,9 @@ const ListArticles = React.memo<ListArticlesPropsType>(({ articles }) => {
   }, [articles]);
 
   return (
-    <List>
+    <List role="list" aria-label="Wikipedia events for today">
       {sortedArticles.map((item, idx) => (
-        <ListItem key={item.pageId ?? `${item.year}-${idx}`}>
+        <ListItem sx={{ pl: 0, pr: 0 }} key={item.pageId ?? `${item.year}-${idx}`} role="listitem">
           <ArticleItem article={item} />
         </ListItem>
       ))}

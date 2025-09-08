@@ -1,6 +1,6 @@
 import React from 'react';
-import { Typography, Container } from '@mui/material';
-import ErrorModal from '@/components/modals/ErrorModal';
+import { Typography, Box } from '@mui/material';
+import ErrorModal from '@/components/modals/ErrorModal/ErrorModal';
 import ListArticles from '@/components/ListArticles/ListArticles';
 import { useCachedEvents } from '@hooks/useCachedEvents';
 import EventControls from '@ui/EventControls/EventControls';
@@ -10,7 +10,7 @@ const HomePage: React.FC = () => {
   const { events, isFetching, loadEvents, openErrorModal, closeErrorModal } = useCachedEvents();
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Box maxWidth="lg" sx={{ mt: 4, mb: 4, pl: { xs: 0, sm: 4 }, pr: { xs: 0, sm: 4 } }}>
       <Typography variant="h1" gutterBottom>
         Wikipedia — On This Day
       </Typography>
@@ -25,7 +25,7 @@ const HomePage: React.FC = () => {
         handleCloseModal={closeErrorModal}
         message="There was a problem fetching Wikipedia events. Please try again later."
       />
-    </Container>
+    </Box>
   );
 };
 

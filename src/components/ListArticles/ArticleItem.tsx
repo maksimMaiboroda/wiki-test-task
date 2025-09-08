@@ -15,6 +15,8 @@ const ArticleItem = React.memo(({ article }: { article: OnThisDayEvent }) => (
       flexDirection: { xs: 'column', sm: 'row' },
       gap: 2,
     }}
+    role="article"
+    aria-labelledby={`event-title-${article.pageId}`}
   >
     {article.thumbnail?.source && (
       <img
@@ -29,6 +31,7 @@ const ArticleItem = React.memo(({ article }: { article: OnThisDayEvent }) => (
         variant="h6"
         gutterBottom
         sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+        id={`event-title-${article.pageId}`}
       >
         {article.year} — {article.title ?? 'Untitled'}
         <Link
@@ -40,12 +43,20 @@ const ArticleItem = React.memo(({ article }: { article: OnThisDayEvent }) => (
         </Link>
       </Typography>
 
-      <Typography variant="subtitle1" gutterBottom>
+      <Typography
+        variant="subtitle1"
+        gutterBottom
+        aria-describedby={`event-description-${article.pageId}`}
+      >
         {article.text}
       </Typography>
 
       {article.extract && (
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          id={`event-description-${article.pageId}`}
+        >
           {article.extract}
         </Typography>
       )}
