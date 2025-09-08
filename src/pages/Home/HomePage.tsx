@@ -7,7 +7,8 @@ import EventControls from '@ui/EventControls/EventControls';
 import SkeletonLoader from '@ui/SkeletonLoader/SkeletonLoader';
 
 const HomePage: React.FC = () => {
-  const { events, isFetching, loadEvents, openErrorModal, closeErrorModal } = useCachedEvents();
+  const { events, isFetching, loadEvents, openErrorModal, closeErrorModal, errorMessage } =
+    useCachedEvents();
 
   return (
     <Box maxWidth="lg" sx={{ mt: 4, mb: 4, pl: { xs: 0, sm: 4 }, pr: { xs: 0, sm: 4 } }}>
@@ -23,7 +24,7 @@ const HomePage: React.FC = () => {
         title="Failed to Load Events"
         openErrorModal={openErrorModal}
         handleCloseModal={closeErrorModal}
-        message="There was a problem fetching Wikipedia events. Please try again later."
+        message={errorMessage}
       />
     </Box>
   );

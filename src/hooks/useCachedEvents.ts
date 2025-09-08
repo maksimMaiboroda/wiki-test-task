@@ -6,10 +6,29 @@ export const useCachedEvents = () => {
   const [trigger, { data, isFetching, error }] = useLazyGetOnThisDayEventsQuery();
   const [cachedData, setCachedData] = useState<OnThisDayEvent[]>([]);
   const [openErrorModal, setOpenErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     if (error) {
       setOpenErrorModal(true);
+
+      if ('status' in error) {
+        switch (error.status) {
+          case 404:
+            setErrorMessage('No events found for today. Please try again later.');
+            break;
+          case 500:
+            setErrorMessage('Wikipedia server is temporarily unavailable. Please try again later.');
+            break;
+          default:
+            setErrorMessage(
+              'There was a problem fetching Wikipedia events. Please try again later.'
+            );
+        }
+      } else {
+        setErrorMessage('Network error. Please check your internet connection.');
+      }
+
       console.error({ error });
     }
   }, [error]);
@@ -44,5 +63,6 @@ export const useCachedEvents = () => {
     error,
     openErrorModal,
     closeErrorModal,
+    errorMessage,
   };
 };

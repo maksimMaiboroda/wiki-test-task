@@ -30,6 +30,16 @@ export const wikiApi = createApi({
   reducerPath: 'wikiApi',
   baseQuery: fetchBaseQuery({
     baseUrl: WIKI_REST_BASE_URL,
+    fetchFn: async (...args) => {
+      const response = await fetch(...args);
+
+      if (!response.ok && response.status >= 500) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return fetch(...args);
+      }
+
+      return response;
+    },
   }),
   endpoints: (build) => ({
     getOnThisDayEvents: build.query<OnThisDayEvent[], { month: number; day: number }>({
@@ -41,6 +51,8 @@ export const wikiApi = createApi({
         };
       },
       transformResponse: transformOnThisDay,
+      keepUnusedDataFor: 300,
+      extraOptions: { maxRetries: 3 },
     }),
   }),
 });
