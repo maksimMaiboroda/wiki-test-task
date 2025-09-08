@@ -1,10 +1,10 @@
 import React from 'react';
 import { Typography, Container } from '@mui/material';
 import ErrorModal from '@/components/modals/ErrorModal';
-import Loader from '@/components/ui/Loader';
 import ListArticles from '@/components/ListArticles/ListArticles';
 import { useCachedEvents } from '@hooks/useCachedEvents';
 import EventControls from '@ui/EventControls/EventControls';
+import SkeletonLoader from '@ui/SkeletonLoader/SkeletonLoader';
 
 const HomePage: React.FC = () => {
   const { events, isFetching, loadEvents, openErrorModal, closeErrorModal } = useCachedEvents();
@@ -17,7 +17,7 @@ const HomePage: React.FC = () => {
 
       <EventControls onLoadEvents={loadEvents} isLoading={isFetching} />
 
-      {isFetching ? <Loader isLoading={isFetching} /> : <ListArticles articles={events || []} />}
+      {isFetching ? <SkeletonLoader /> : <ListArticles articles={events || []} />}
 
       <ErrorModal
         title="Failed to Load Events"

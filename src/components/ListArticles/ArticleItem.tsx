@@ -16,12 +16,14 @@ const ArticleItem = React.memo(({ article }: { article: OnThisDayEvent }) => (
       gap: 2,
     }}
   >
-    <img
-      srcSet={`${article.thumbnail?.source}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-      src={`${article.thumbnail?.source}?w=164&h=164&fit=crop&auto=format`}
-      alt={article.title}
-      loading="lazy"
-    />
+    {article.thumbnail?.source && (
+      <img
+        srcSet={`${article.thumbnail.source}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+        src={`${article.thumbnail.source}?w=164&h=164&fit=crop&auto=format`}
+        alt={article.title}
+        loading="lazy"
+      />
+    )}
     <Box>
       <Typography
         variant="h6"
