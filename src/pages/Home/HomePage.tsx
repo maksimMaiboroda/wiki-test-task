@@ -18,7 +18,11 @@ const HomePage: React.FC = () => {
 
       <EventControls onLoadEvents={loadEvents} isLoading={isFetching} />
 
-      {isFetching ? <SkeletonLoader /> : <ListArticles articles={events || []} />}
+      {isFetching ? (
+        <SkeletonLoader />
+      ) : (
+        <ListArticles articles={events || []} sortBy="year" sortOrder="asc" />
+      )}
 
       <ErrorModal
         title="Failed to Load Events"
